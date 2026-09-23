@@ -91,27 +91,34 @@ export interface FleetStatusProps {
 /** Remaining/sunk ships for both sides during the battle. */
 export function FleetStatus({ state }: FleetStatusProps) {
   const sides = [
-    { label: 'Your fleet', ships: state.playerBoard.ships },
-    { label: 'Enemy fleet', ships: state.aiBoard.ships },
+    // Damage is only shown for your own fleet: revealing which enemy ship a hit
+    // belongs to would give away where the rest of that ship must be.
+    { label: 'Your fleet', ships: state.playerBoard.ships, showDamage: true },
+    { label: 'Enemy fleet', ships: state.aiBoard.ships, showDamage: false },
   ];
 
   return (
     <div className="fleet-status">
-      {sides.map(({ label, ships }) => (
+      {sides.map(({ label, ships, showDamage }) => (
         <div key={label}>
           <h3>{label}</h3>
           <ul className="fleet">
-            {ships.map((ship) => (
-              <li
-                key={ship.id}
-                className={`fleet__item${isSunk(ship) ? ' fleet__item--sunk' : ''}`}
-              >
-                <span className="fleet__name">{ship.name}</span>
-                <span className="fleet__pips" aria-hidden="true">
-                  {ship.hits.map((hit) => (hit ? '✕' : '■')).join('')}
-                </span>
-              </li>
-            ))}
+            {ships.map((ship) => {
+              const sunk = isSunk(ship);
+              return (
+                <li
+                  key={ship.id}
+                  className={`fleet__item${sunk ? ' fleet__item--sunk' : ''}`}
+                >
+                  <span className="fleet__name">{ship.name}</span>
+                  <span className="fleet__pips" aria-hidden="true">
+                    {ship.hits
+                      .map((hit) => (sunk || (showDamage && hit) ? '✕' : '■'))
+                      .join('')}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       ))}
