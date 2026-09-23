@@ -116,9 +116,12 @@ export function recordShot(
     (coord) => coordKey(coord) !== coordKey(target) && isShootable(board, coord),
   );
 
-  if (outcome === 'miss') return { ...state, targetQueue };
   // A sunk ship tells us nothing more; drop the trail and go back to hunting.
   if (outcome === 'sunk') return createAiState();
+  if (outcome === 'miss') {
+    // Nothing left to probe: forget the trail so a later hit starts clean.
+    return targetQueue.length === 0 ? createAiState() : { ...state, targetQueue };
+  }
 
   const activeHits = [...state.activeHits, target];
   const extensions = activeHits.length > 1 ? lineExtensions(activeHits) : null;
@@ -128,8 +131,9 @@ export function recordShot(
 
   return {
     activeHits,
-    // Line extensions take priority; keep earlier candidates as a fallback for
-    // when the line turns out to be a dead end.
-    targetQueue: dedupe([...candidates, ...targetQueue]),
+    // Once the hits form a line the ship's axis is known, so the perpendicular
+    // candidates queued earlier are dropped; they are only kept as a fallback
+    // if the line itself has nowhere left to extend.
+    targetQueue: dedupe(candidates.length > 0 ? candidates : targetQueue),
   };
 }
