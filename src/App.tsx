@@ -25,6 +25,19 @@ function statusText(phase: Phase, winner: Player | null): string {
   }
 }
 
+function enemyBoardSubtitle(phase: Phase): string {
+  switch (phase) {
+    case 'player-turn':
+      return 'Click a cell to fire';
+    case 'ai-turn':
+      return 'Hold fire until your turn';
+    case 'game-over':
+      return 'Battle over';
+    default:
+      return 'Waiting for the battle to start';
+  }
+}
+
 export default function App() {
   const { state, actions } = useGame();
   const [hovered, setHovered] = useState<Coord | null>(null);
@@ -98,11 +111,7 @@ export default function App() {
 
         <GameBoard
           title="Enemy waters"
-          subtitle={
-            state.phase === 'player-turn'
-              ? 'Click a cell to fire'
-              : 'Hold fire until your turn'
-          }
+          subtitle={enemyBoardSubtitle(state.phase)}
           board={state.aiBoard}
           variant="opponent"
           interactive={state.phase === 'player-turn'}

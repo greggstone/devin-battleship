@@ -58,6 +58,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  min-width: 0; /* let the panels shrink instead of overflowing the grid column */
 }
 
 /* Boards */
@@ -68,12 +69,18 @@
   padding: 0.9rem;
 }
 
+/* Each board variant only changes colours; cell state rules stay single-class so
+   that later rules (hit, sunk, preview) always win over earlier ones. */
 .board--player {
   border-top: 3px solid var(--player);
+  --ship-bg: #3f5c73;
+  --ship-border: var(--player);
 }
 
 .board--opponent {
   border-top: 3px solid var(--enemy);
+  --ship-bg: #475569;
+  --ship-border: #64748b;
 }
 
 .board__header h2 {
@@ -130,13 +137,8 @@
 }
 
 .cell--ship {
-  background: #475569;
-  border-color: #64748b;
-}
-
-.board--player .cell--ship {
-  background: #3f5c73;
-  border-color: var(--player);
+  background: var(--ship-bg);
+  border-color: var(--ship-border);
 }
 
 .cell--miss {
@@ -262,9 +264,13 @@
 }
 
 .fleet-status {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 0.9rem;
+}
+
+.fleet-status .fleet {
+  margin-bottom: 0;
 }
 
 .fleet-status h3 {
