@@ -32,6 +32,8 @@ Other scripts:
    Rotate with the **Rotate** button or the <kbd>R</kbd> key, or use **Random**.
 2. **Start the battle.** Click a cell on the enemy board to fire. Hits are red, misses are
    grey dots, and a sunk ship's cells turn solid red and get struck through in the fleet list.
+   Your own fleet panel shows damage per ship; the enemy's only shows it once a ship sinks,
+   so you cannot deduce where the rest of a damaged enemy ship lies.
 3. **Keep firing** until one fleet is gone. The winner is announced and **Play again**
    starts a fresh game without reloading the page.
 
@@ -86,8 +88,9 @@ use, and hunting only picks from cells that have never been shot.
 ## Testing
 
 45 unit tests cover placement rules, firing, sinking, win detection, phase transitions and
-AI behaviour (including a property-style check that the AI never repeats a shot across full
-simulated games, and that it sinks a fleet in far fewer shots than random play would).
+AI behaviour — about 95% statement coverage of `src/game`. They include property-style checks
+that the AI never repeats a shot across full simulated games and that it sinks a fleet in far
+fewer shots than random play would.
 
 ```bash
 npm test
