@@ -1,122 +1,130 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useCallback, useEffect, useState } from 'react';
+import './App.css';
+import { BattleLog } from './components/BattleLog';
+import { GameBoard } from './components/GameBoard';
+import { FleetStatus, PlacementPanel } from './components/PlacementPanel';
+import { shipFootprint } from './game/board';
+import {
+  canPlayerFire,
+  checkPlayerPlacement,
+  currentPlacementShip,
+} from './game/game';
+import type { Coord, Phase, PlacementError, Player } from './game/types';
+import { useGame } from './hooks/useGame';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+function statusText(phase: Phase, winner: Player | null): string {
+  switch (phase) {
+    case 'placement':
+      return 'Deploy your fleet';
+    case 'player-turn':
+      return 'Your turn — fire at the enemy waters';
+    case 'ai-turn':
+      return 'Enemy is taking aim…';
+    default:
+      return winner === 'player' ? 'You win!' : 'The AI wins';
+  }
 }
 
-export default App
+export default function App() {
+  const { state, actions } = useGame();
+  const [hovered, setHovered] = useState<Coord | null>(null);
+  const isPlacement = state.phase === 'placement';
+
+  // Rotate with the keyboard so placement does not require the mouse alone.
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() === 'r' && isPlacement) actions.rotate();
+    },
+    [actions, isPlacement],
+  );
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
+  const placementCheck = hovered ? checkPlayerPlacement(state, hovered) : null;
+  const placementShip = currentPlacementShip(state);
+  const preview =
+    isPlacement && hovered && placementShip && placementCheck
+      ? {
+          cells: shipFootprint(hovered, placementShip.length, state.orientation),
+          valid: placementCheck.valid,
+        }
+      : undefined;
+  const hoverError: PlacementError | null =
+    placementCheck && !placementCheck.valid ? placementCheck.error : null;
+
+  return (
+    <div className="app">
+      <header className="app__header">
+        <h1>Battleship</h1>
+        <div className={`status status--${state.phase}`} role="status">
+          {statusText(state.phase, state.winner)}
+        </div>
+        <button type="button" onClick={actions.newGame}>
+          New game
+        </button>
+      </header>
+
+      <main className="app__main">
+        <GameBoard
+          title="Your waters"
+          subtitle={isPlacement ? 'Click to place ships' : 'Enemy shots land here'}
+          board={state.playerBoard}
+          variant="player"
+          interactive={isPlacement && !!placementShip}
+          preview={preview}
+          onCellClick={actions.placeShip}
+          onCellHover={setHovered}
+        />
+
+        <aside className="app__side">
+          {isPlacement ? (
+            <PlacementPanel
+              state={state}
+              hoverError={hoverError}
+              onRotate={actions.rotate}
+              onRandomize={actions.randomizeShips}
+              onClear={actions.clearShips}
+              onStart={actions.startBattle}
+            />
+          ) : (
+            <>
+              <FleetStatus state={state} />
+              <BattleLog entries={state.log} />
+            </>
+          )}
+        </aside>
+
+        <GameBoard
+          title="Enemy waters"
+          subtitle={
+            state.phase === 'player-turn'
+              ? 'Click a cell to fire'
+              : 'Hold fire until your turn'
+          }
+          board={state.aiBoard}
+          variant="opponent"
+          interactive={state.phase === 'player-turn'}
+          onCellClick={(coord) => {
+            if (canPlayerFire(state, coord)) actions.fire(coord);
+          }}
+        />
+      </main>
+
+      {state.phase === 'game-over' && (
+        <div className="result" role="alertdialog" aria-label="Game over">
+          <h2>{state.winner === 'player' ? 'Victory!' : 'Defeat'}</h2>
+          <p>
+            {state.winner === 'player'
+              ? 'You sank the entire enemy fleet.'
+              : 'The AI sank your entire fleet.'}
+          </p>
+          <button type="button" className="button--primary" onClick={actions.newGame}>
+            Play again
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
