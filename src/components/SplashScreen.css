@@ -1,0 +1,274 @@
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  perspective: 1400px;
+  background: radial-gradient(900px 500px at 50% 110%, #0b2a45 0%, #030816 70%);
+}
+
+.splash__doors {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  transform-style: preserve-3d;
+}
+
+.splash__door {
+  flex: 1 1 50%;
+  height: 100%;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: transform 1.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.splash__door--left {
+  transform-origin: left center;
+}
+
+.splash__door--right {
+  transform-origin: right center;
+  transition-delay: 0.08s;
+}
+
+.splash--opening .splash__door--left {
+  transform: rotateY(-108deg);
+}
+
+.splash--opening .splash__door--right {
+  transform: rotateY(108deg);
+}
+
+/* Door panel: brushed steel bulkhead */
+.door {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.025) 0 2px,
+      transparent 2px 6px
+    ),
+    linear-gradient(90deg, #3a4656 0%, #556376 30%, #4a5768 55%, #2f3a48 100%);
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.55);
+}
+
+.splash__door--right .door {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.025) 0 2px,
+      transparent 2px 6px
+    ),
+    linear-gradient(90deg, #2f3a48 0%, #4a5768 45%, #556376 70%, #3a4656 100%);
+}
+
+.door__frame {
+  position: absolute;
+  inset: 28px;
+  border: 6px solid #232c38;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.08),
+    0 0 0 2px rgba(255, 255, 255, 0.06);
+}
+
+.door__rivets {
+  position: absolute;
+  left: 44px;
+  right: 44px;
+  height: 12px;
+  background: radial-gradient(circle at center, #8a97a8 0 3px, #1a212c 3.5px 5px, transparent 5.5px);
+  background-size: 40px 12px;
+  background-repeat: repeat-x;
+}
+
+.door__rivets--top {
+  top: 42px;
+}
+
+.door__rivets--bottom {
+  bottom: 42px;
+}
+
+.door__stripe {
+  position: absolute;
+  top: 50%;
+  left: 60px;
+  right: 60px;
+  height: 56px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(
+    -45deg,
+    #f2b21b 0 28px,
+    #1c2330 28px 56px
+  );
+  opacity: 0.85;
+  border-top: 3px solid #1c2330;
+  border-bottom: 3px solid #1c2330;
+}
+
+.door__stencil {
+  position: absolute;
+  top: 22%;
+  transform: translateY(-50%);
+  width: 100%;
+  text-align: center;
+  font-size: 64px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  color: rgba(226, 232, 240, 0.28);
+  font-family: 'Impact', 'Arial Black', system-ui, sans-serif;
+}
+
+.door__handle {
+  position: absolute;
+  top: 50%;
+  width: 22px;
+  height: 140px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, #1a212c, #7d8a9b 50%, #1a212c);
+  border-radius: 11px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+}
+
+.splash__door--left .door__handle {
+  right: 70px;
+  top: 22%;
+}
+
+.splash__door--right .door__handle {
+  left: 70px;
+  top: 22%;
+}
+
+/* Seam glow between the doors */
+.splash__doors::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, transparent, var(--accent), transparent);
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.splash--opening .splash__doors::after {
+  opacity: 0;
+}
+
+/* Centered content */
+.splash__content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  text-align: center;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.splash__plaque {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 2.4rem 4rem 2.8rem;
+  background: rgba(8, 14, 28, 0.82);
+  border: 2px solid #1f2a3a;
+  border-radius: 14px;
+  box-shadow:
+    inset 0 0 0 1px rgba(148, 163, 184, 0.12),
+    0 30px 80px rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+}
+
+.splash--opening .splash__content {
+  opacity: 0;
+  transform: scale(1.08);
+  pointer-events: none;
+}
+
+.splash__eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.splash__title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #f1f5f9;
+  text-shadow:
+    0 2px 0 #0b1220,
+    0 0 40px rgba(56, 189, 248, 0.45);
+}
+
+.splash__tagline {
+  margin: 0 0 1.4rem;
+  color: #cbd5e1;
+  letter-spacing: 0.08em;
+}
+
+.splash__enter {
+  padding: 0.9rem 3.2rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #06283d;
+  background: linear-gradient(180deg, #7dd3fc, var(--accent));
+  border: 2px solid #bae6fd;
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 6px rgba(56, 189, 248, 0.18),
+    0 12px 30px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.splash__enter:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: #fff;
+  box-shadow:
+    0 0 0 10px rgba(56, 189, 248, 0.22),
+    0 16px 36px rgba(0, 0, 0, 0.55);
+}
+
+/* Invisible element whose transition (matching the door timing) signals completion. */
+.splash__sentinel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0.08s;
+}
+
+.splash--opening .splash__sentinel {
+  opacity: 0;
+}
+
+/* Let the game show through once the doors swing out. */
+.splash--opening {
+  background: transparent;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash__door,
+  .splash__sentinel,
+  .splash__content {
+    transition-duration: 0.2s;
+    transition-delay: 0s;
+  }
+}
