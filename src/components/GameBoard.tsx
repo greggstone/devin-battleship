@@ -9,6 +9,8 @@ export interface GameBoardProps {
   variant: 'player' | 'opponent';
   /** When false, cells are not clickable (wrong phase, game over, ...). */
   interactive: boolean;
+  /** Show intact opponent ships too, e.g. after the player has lost. */
+  revealShips?: boolean;
   /** Footprint of the ship being placed, highlighted under the cursor. */
   preview?: { cells: Coord[]; valid: boolean };
   onCellClick?: (coord: Coord) => void;
@@ -25,10 +27,12 @@ function cellStatusText(
   shot: Board['shots'][number][number],
   isShip: boolean,
   sunk: boolean,
+  variant: GameBoardProps['variant'],
 ): string {
   if (shot === 'hit') return sunk ? 'sunk ship' : 'hit';
   if (shot === 'miss') return 'miss';
-  return isShip ? 'your ship' : 'unexplored';
+  if (!isShip) return 'unexplored';
+  return variant === 'player' ? 'your ship' : 'enemy ship';
 }
 
 export function GameBoard({
@@ -37,6 +41,7 @@ export function GameBoard({
   board,
   variant,
   interactive,
+  revealShips = false,
   preview,
   onCellClick,
   onCellHover,
@@ -83,13 +88,17 @@ export function GameBoard({
               const key = coordKey(coord);
               const shot = board.shots[row][col];
               const sunk = sunkCells.has(key);
-              // The opponent's intact ships stay hidden; hits reveal themselves.
-              const showShip = shipCells.has(key) && (variant === 'player' || sunk);
+              // The opponent's intact ships stay hidden until the game is over;
+              // hits reveal themselves.
+              const showShip =
+                shipCells.has(key) && (variant === 'player' || sunk || revealShips);
+              const isRevealed = showShip && variant === 'opponent' && shot === null;
               const isPreview = previewCells.has(key);
 
               const classNames = [
                 'cell',
                 showShip && 'cell--ship',
+                isRevealed && 'cell--revealed',
                 shot === 'hit' && 'cell--hit',
                 shot === 'miss' && 'cell--miss',
                 sunk && shot === 'hit' && 'cell--sunk',
@@ -111,8 +120,9 @@ export function GameBoard({
                   onFocus={() => onCellHover?.(coord)}
                   aria-label={`${cellLabel(coord)} ${cellStatusText(
                     shot,
-                    variant === 'player' && shipCells.has(key),
+                    showShip,
                     sunk,
+                    variant,
                   )}`}
                 >
                   <span className="cell__mark" aria-hidden="true" />

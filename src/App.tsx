@@ -25,14 +25,14 @@ function statusText(phase: Phase, winner: Player | null): string {
   }
 }
 
-function enemyBoardSubtitle(phase: Phase): string {
+function enemyBoardSubtitle(phase: Phase, revealed: boolean): string {
   switch (phase) {
     case 'player-turn':
       return 'Click a cell to fire';
     case 'ai-turn':
       return 'Hold fire until your turn';
     case 'game-over':
-      return 'Battle over';
+      return revealed ? 'Battle over — enemy fleet revealed' : 'Battle over';
     default:
       return 'Waiting for the battle to start';
   }
@@ -42,6 +42,9 @@ export default function App() {
   const { state, actions } = useGame();
   const [hovered, setHovered] = useState<Coord | null>(null);
   const isPlacement = state.phase === 'placement';
+  // Once the player has lost there is nothing left to hide, so show the ships
+  // they never found.
+  const revealEnemyFleet = state.phase === 'game-over' && state.winner === 'ai';
 
   // Rotate with the keyboard so placement does not require the mouse alone.
   const handleKeyDown = useCallback(
@@ -103,7 +106,7 @@ export default function App() {
             />
           ) : (
             <>
-              <FleetStatus state={state} />
+              <FleetStatus state={state} revealEnemyDamage={revealEnemyFleet} />
               <BattleLog entries={state.log} />
             </>
           )}
@@ -111,10 +114,11 @@ export default function App() {
 
         <GameBoard
           title="Enemy waters"
-          subtitle={enemyBoardSubtitle(state.phase)}
+          subtitle={enemyBoardSubtitle(state.phase, revealEnemyFleet)}
           board={state.aiBoard}
           variant="opponent"
           interactive={state.phase === 'player-turn'}
+          revealShips={revealEnemyFleet}
           onCellClick={(coord) => {
             if (canPlayerFire(state, coord)) actions.fire(coord);
           }}

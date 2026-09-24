@@ -86,15 +86,17 @@ export function PlacementPanel({
 
 export interface FleetStatusProps {
   state: GameState;
+  /** Show per-segment enemy damage too (only safe once the game is over). */
+  revealEnemyDamage?: boolean;
 }
 
 /** Remaining/sunk ships for both sides during the battle. */
-export function FleetStatus({ state }: FleetStatusProps) {
+export function FleetStatus({ state, revealEnemyDamage = false }: FleetStatusProps) {
   const sides = [
-    // Damage is only shown for your own fleet: revealing which enemy ship a hit
-    // belongs to would give away where the rest of that ship must be.
+    // Damage is only shown for your own fleet while playing: revealing which enemy
+    // ship a hit belongs to would give away where the rest of that ship must be.
     { label: 'Your fleet', ships: state.playerBoard.ships, showDamage: true },
-    { label: 'Enemy fleet', ships: state.aiBoard.ships, showDamage: false },
+    { label: 'Enemy fleet', ships: state.aiBoard.ships, showDamage: revealEnemyDamage },
   ];
 
   return (

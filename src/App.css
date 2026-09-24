@@ -141,6 +141,13 @@
   border-color: var(--ship-border);
 }
 
+/* Intact enemy ships shown after a loss: outlined, so they read as "never found"
+   rather than as hits. */
+.cell--revealed {
+  background: transparent;
+  border: 2px dashed var(--enemy);
+}
+
 .cell--miss {
   background: rgba(100, 116, 139, 0.25);
 }
