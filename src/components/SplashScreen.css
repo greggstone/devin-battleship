@@ -1,0 +1,83 @@
+.splash {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(900px 500px at 50% 0%, rgba(56, 189, 248, 0.25) 0%, transparent 65%),
+    linear-gradient(180deg, #0b1a33 0%, #0f172a 45%, #061120 100%);
+}
+
+/* Faint grid recalls the game boards without adding any imagery. */
+.splash::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+.splash__waves {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -18vh;
+  height: 45vh;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(34, 211, 238, 0.28) 0%, transparent 70%),
+    repeating-radial-gradient(
+      ellipse at 50% 120%,
+      transparent 0 26px,
+      rgba(56, 189, 248, 0.12) 26px 28px
+    );
+  animation: splash-swell 6s ease-in-out infinite alternate;
+}
+
+@keyframes splash-swell {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-14px);
+  }
+}
+
+.splash__enter {
+  position: relative;
+  min-width: 260px;
+  padding: 1.1rem 3.5rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #06283d;
+  background: linear-gradient(180deg, #7dd3fc 0%, var(--accent) 100%);
+  border: 1px solid #7dd3fc;
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 6px rgba(56, 189, 248, 0.15),
+    0 18px 50px rgba(56, 189, 248, 0.35);
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.splash__enter:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 8px rgba(56, 189, 248, 0.2),
+    0 22px 60px rgba(56, 189, 248, 0.45);
+}
+
+.splash__enter:active {
+  transform: translateY(0);
+}
+
+.splash__enter:focus-visible {
+  outline: 3px solid #e2e8f0;
+  outline-offset: 4px;
+}
