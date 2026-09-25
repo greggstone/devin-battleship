@@ -1,0 +1,52 @@
+.splash {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.splash__logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--accent);
+}
+
+.splash__ship {
+  width: min(320px, 80vw);
+  height: auto;
+  filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.45));
+}
+
+.splash__title {
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--text);
+  text-shadow:
+    0 2px 0 #06283d,
+    0 0 24px rgba(56, 189, 248, 0.35);
+}
+
+.splash__tagline {
+  margin: 0;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.splash__enter {
+  min-width: 12rem;
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
