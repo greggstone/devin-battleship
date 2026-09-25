@@ -3,6 +3,7 @@ import './App.css';
 import { BattleLog } from './components/BattleLog';
 import { GameBoard } from './components/GameBoard';
 import { FleetStatus, PlacementPanel } from './components/PlacementPanel';
+import { SplashScreen } from './components/SplashScreen';
 import { shipFootprint } from './game/board';
 import {
   canPlayerFire,
@@ -40,6 +41,7 @@ function enemyBoardSubtitle(phase: Phase, revealed: boolean): string {
 
 export default function App() {
   const { state, actions } = useGame();
+  const [showSplash, setShowSplash] = useState(true);
   const [hovered, setHovered] = useState<Coord | null>(null);
   const isPlacement = state.phase === 'placement';
   // Once the player has lost there is nothing left to hide, so show the ships
@@ -69,6 +71,8 @@ export default function App() {
       : undefined;
   const hoverError: PlacementError | null =
     placementCheck && !placementCheck.valid ? placementCheck.error : null;
+
+  if (showSplash) return <SplashScreen onEnter={() => setShowSplash(false)} />;
 
   return (
     <div className="app">
