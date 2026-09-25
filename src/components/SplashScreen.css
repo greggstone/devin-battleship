@@ -1,0 +1,71 @@
+.splash {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(900px 500px at 50% 0%, rgba(56, 189, 248, 0.25) 0%, transparent 65%),
+    linear-gradient(180deg, #0b1a33 0%, #0f2a4a 45%, #06283d 100%);
+}
+
+/* Layered wave bands drifting across the lower half of the screen. */
+.splash::before,
+.splash::after {
+  content: '';
+  position: absolute;
+  left: -50%;
+  width: 200%;
+  height: 55%;
+  bottom: -20%;
+  border-radius: 45%;
+  background: rgba(34, 211, 238, 0.12);
+  animation: splash-drift 14s ease-in-out infinite;
+}
+
+.splash::after {
+  bottom: -28%;
+  background: rgba(14, 165, 233, 0.18);
+  animation-duration: 20s;
+  animation-direction: reverse;
+}
+
+@keyframes splash-drift {
+  0%,
+  100% {
+    transform: translateX(-4%) rotate(-1deg);
+  }
+  50% {
+    transform: translateX(4%) rotate(1deg);
+  }
+}
+
+.splash__enter {
+  position: relative;
+  z-index: 1;
+  padding: 1rem 3.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #06283d;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  box-shadow: 0 0 40px rgba(56, 189, 248, 0.45);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.splash__enter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 60px rgba(56, 189, 248, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash::before,
+  .splash::after {
+    animation: none;
+  }
+}
