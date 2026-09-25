@@ -1,0 +1,142 @@
+.splash {
+  --splash-duration: 1000ms;
+  --steel: #4b5563;
+  --steel-dark: #2b3340;
+  --steel-light: #6b7684;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1400px;
+  overflow: hidden;
+}
+
+.splash__door {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 120px,
+      rgba(0, 0, 0, 0.18) 120px 124px
+    ),
+    linear-gradient(90deg, var(--steel-dark), var(--steel) 45%, var(--steel-light) 50%, var(--steel) 55%, var(--steel-dark));
+  box-shadow: inset 0 0 0 10px var(--steel-dark), inset 0 0 0 12px var(--steel-light),
+    inset 0 0 80px rgba(0, 0, 0, 0.6);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: transform var(--splash-duration) cubic-bezier(0.55, 0.05, 0.4, 1);
+}
+
+.splash__door--left {
+  left: 0;
+  transform-origin: left center;
+  border-right: 6px solid #111827;
+}
+
+.splash__door--right {
+  right: 0;
+  transform-origin: right center;
+  border-left: 6px solid #111827;
+}
+
+.splash--opening .splash__door--left {
+  transform: rotateY(-110deg);
+}
+
+.splash--opening .splash__door--right {
+  transform: rotateY(110deg);
+}
+
+/* Rivets along the door frame. */
+.splash__rivets {
+  position: absolute;
+  inset: 18px;
+  border-radius: 4px;
+  background-image:
+    radial-gradient(circle, var(--steel-light) 0 3px, transparent 4px),
+    radial-gradient(circle, var(--steel-light) 0 3px, transparent 4px);
+  background-size: 40px 12px, 12px 40px;
+  background-repeat: repeat-x, repeat-y;
+  background-position: 0 0, 0 0;
+  -webkit-mask:
+    linear-gradient(#000, #000) top / 100% 12px no-repeat,
+    linear-gradient(#000, #000) bottom / 100% 12px no-repeat,
+    linear-gradient(#000, #000) left / 12px 100% no-repeat,
+    linear-gradient(#000, #000) right / 12px 100% no-repeat;
+  mask:
+    linear-gradient(#000, #000) top / 100% 12px no-repeat,
+    linear-gradient(#000, #000) bottom / 100% 12px no-repeat,
+    linear-gradient(#000, #000) left / 12px 100% no-repeat,
+    linear-gradient(#000, #000) right / 12px 100% no-repeat;
+}
+
+.splash__porthole {
+  position: absolute;
+  top: 22%;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 12px solid var(--steel-light);
+  background: radial-gradient(circle at 35% 35%, #7dd3fc 0%, #0c4a6e 40%, #082f49 100%);
+  box-shadow: 0 0 0 4px var(--steel-dark), inset 0 0 30px rgba(0, 0, 0, 0.7);
+}
+
+.splash__door--left .splash__porthole {
+  right: 18%;
+}
+
+.splash__door--right .splash__porthole {
+  left: 18%;
+}
+
+.splash__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 2.5rem;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  transition: opacity 300ms ease;
+}
+
+.splash--opening .splash__content {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash__title {
+  font-size: 2.25rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.splash__subtitle {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.splash__enter {
+  margin-top: 0.5rem;
+  padding: 0.7rem 2.5rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash__door,
+  .splash__content {
+    transition: none;
+  }
+}
